@@ -5,8 +5,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 
-import { db } from "@/firebase/firestore";
-
+import { db } from "@/lib/firebase";
 import { UserProfile } from "@/types/user";
 
 export async function getUser(uid: string) {
