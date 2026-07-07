@@ -32,21 +32,32 @@ export interface UserProfile {
   profileCompleted: boolean;
 
   subscriptionStatus:
-    | "inactive"
-    | "active"
-    | "expired";
+  | "inactive"
+  | "pending"
+  | "active"
+  | "expired";
 
-  paymentStatus:
-    | "pending"
-    | "paid"
-    | "failed";
+paymentStatus:
+  | "unpaid"
+  | "pending"
+  | "paid"
+  | "failed";
 
-  paymentMode:
-    | "mpesa"
-    | "intasend"
-    | "";
+paymentMode?:
+  | "mpesa"
+  | "intasend";
 
-  paymentReference: string;
+paymentProvider?:
+  | "nestlink"
+  | "intasend";
+
+paymentReference?: string;
+
+subscriptionStart?: Date;
+
+subscriptionEnd?: Date;
+
+  
 
   referralChoice: string;
 
