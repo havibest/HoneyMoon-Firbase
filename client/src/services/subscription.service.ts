@@ -164,7 +164,7 @@ export class SubscriptionService {
   }
 
   private getReferralChoice(subscription: Subscription): 0 | 1 | 2 | 5 {
-    console.log("Getting referral choice for subscription:", subscription.id);
+    //console.log("Getting referral choice for subscription:", subscription.id);
 
     return subscription.selectedReferralChoice;
   }
@@ -181,12 +181,12 @@ export class SubscriptionService {
     
 
   ): Promise<Subscription> {
-    console.log("Creating subscription for:", userId);
+    //console.log("Creating subscription for:", userId);
 
     const user = await this.getUser(userId);
 
     if (!user) {
-      console.log("Looking for user:", userId);
+     console.log("Looking for user:", userId);
 
 const ref = doc(this.usersCollection, userId);
 const snap = await getDoc(ref);
