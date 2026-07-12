@@ -187,7 +187,7 @@ return {
 
     const user = await this.getUser(userId);
 
-    console.log("1. createPayment started");
+    //console.log("1. createPayment started");
 
     if (!user) {
 
@@ -196,7 +196,7 @@ return {
     }
 
     const subscription = await this.getSubscription(userId);
-    console.log("2. User:", user);
+    //console.log("2. User:", user);
 
     if (!subscription) {
 
@@ -221,7 +221,7 @@ return {
     const provider = this.getPaymentProvider(
       user.country,
     );
-    console.log("Provider =", provider);
+    //console.log("Provider =", provider);
     await updateDoc(
     doc(db, "subscriptions", subscription.id),
     {
@@ -276,7 +276,7 @@ return {
     updatedAt: serverTimestamp(),
   }),
 );
-console.log("3. Subscription:", subscription);
+//console.log("3. Subscription:", subscription);
 
 const createdPayment: Payment = {
   id: ref.id,
@@ -374,7 +374,7 @@ return {
       updatedAt: serverTimestamp(),
 
     });
-    console.log("Entered startNestLinkPayment");
+    //console.log("Entered startNestLinkPayment");
 
   }
 
@@ -397,7 +397,7 @@ public async startNestLinkPayment(
   transaction_desc: "HoneyMoon Membership",
 };
 
-console.log("NestLink payload:", payload);
+//console.log("NestLink payload:", payload);
   const response = await fetch(
 
     `${import.meta.env.VITE_NESTLINK_BASE_URL}/runPrompt`,
@@ -418,16 +418,16 @@ console.log("NestLink payload:", payload);
   if (!response.ok) {
   const errorBody = await response.text();
 
-  console.error("NestLink Error:", response.status);
-  console.error(errorBody);
+ // console.error("NestLink Error:", response.status);
+ // console.error(errorBody);
 
   throw new Error(errorBody);
 }
 
 const result = await response.json();
 
-console.log("NestLink response:", result);
-console.log("NestLink response:", result);
+//console.log("NestLink response:", result);
+//console.log("NestLink response:", result);
   if (!result.status) {
     throw new Error(result.msg);
   }
@@ -470,8 +470,8 @@ async verifyNestLinkPayment(paymentId: string) {
 
   const result = await response.json();
 
-console.log("NestLink HTTP status:", response.status);
-console.log("NestLink response:", result);
+//console.log("NestLink HTTP status:", response.status);
+//console.log("NestLink response:", result);
 
 if (!response.ok) {
   throw new Error(
@@ -678,13 +678,13 @@ async verifyPayment(paymentId: string) {
   if (!payment) {
     throw new Error("Payment not found.");
   }
-console.log("Selected provider:", payment.provider);
+//console.log("Selected provider:", payment.provider);
   if (payment.provider === "nestlink") {
 
     return this.verifyNestLinkPayment(paymentId);
 
   }
-console.log("Calling IntaSend...");
+//console.log("Calling IntaSend...");
   return this.verifyIntaSendPayment(paymentId);
 
 }
