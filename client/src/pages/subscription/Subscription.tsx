@@ -53,9 +53,10 @@ export default function SubscriptionPage() {
 
     //
     // Save subscription
-    //
+    /*
     console.log("PROFILE", profile);
     console.log("UID", profile.uid);
+    */
 
     await subscriptionService.selectPlan(
       profile.uid,
