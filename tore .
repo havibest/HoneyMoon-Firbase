@@ -1,0 +1,948 @@
+[1mdiff --git a/client/index.html b/client/index.html[m
+[1mindex 41e95c3..7006ffa 100644[m
+[1m--- a/client/index.html[m
+[1m+++ b/client/index.html[m
+[36m@@ -8,7 +8,7 @@[m
+     <!-- Primary Meta Tags -->[m
+     <title>HONEYMOON — The World's Relationship & Opportunity Platform</title>[m
+     <meta name="title" content="HONEYMOON — The World's Relationship & Opportunity Platform" />[m
+[31m-    <meta name="description" content="Connect for love, friendship, travel, language exchange, freelancing, and AI work. Join 50,000+ members across 120+ countries. One profile, endless possibilities." />[m
+[32m+[m[32m    <meta name="description" content="Connect for love, friendship, travel, language exchange, freelancing, and AI work. Join 50,000+ users across 120+ countries. One profile, endless possibilities." />[m
+     <meta name="keywords" content="dating app, relationship platform, find love, meet people, honeymoon app, online dating, friendship, travel companion, language learning, freelancing, AI work, social platform, match, chat, connect" />[m
+     <meta name="author" content="HONEYMOON" />[m
+     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />[m
+[36m@@ -20,7 +20,7 @@[m
+     <meta property="og:type" content="website" />[m
+     <meta property="og:url" content="https://honeymoon.app/" />[m
+     <meta property="og:title" content="HONEYMOON — The World's Relationship & Opportunity Platform" />[m
+[31m-    <meta property="og:description" content="Connect for love, friendship, travel, language exchange, freelancing, and AI work. Join 50,000+ members across 120+ countries." />[m
+[32m+[m[32m    <meta property="og:description" content="Connect for love, friendship, travel, language exchange, freelancing, and AI work. Join 50,000+ users across 120+ countries." />[m
+     <meta property="og:image" content="https://honeymoon.app/og-image.jpg" />[m
+     <meta property="og:site_name" content="HONEYMOON" />[m
+     <meta property="og:locale" content="en_US" />[m
+[36m@@ -29,7 +29,7 @@[m
+     <meta name="twitter:card" content="summary_large_image" />[m
+     <meta name="twitter:url" content="https://honeymoon.app/" />[m
+     <meta name="twitter:title" content="HONEYMOON — The World's Relationship & Opportunity Platform" />[m
+[31m-    <meta name="twitter:description" content="Connect for love, friendship, travel, language exchange, freelancing, and AI work. Join 50,000+ members across 120+ countries." />[m
+[32m+[m[32m    <meta name="twitter:description" content="Connect for love, friendship, travel, language exchange, freelancing, and AI work. Join 50,000+ users across 120+ countries." />[m
+     <meta name="twitter:image" content="https://honeymoon.app/og-image.jpg" />[m
+     <meta name="twitter:creator" content="@honeymoon" />[m
+ [m
+[1mdiff --git a/client/src/context/AuthContext.tsx b/client/src/context/AuthContext.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex 6da1c84..0000000[m
+[1m--- a/client/src/context/AuthContext.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1,144 +0,0 @@[m
+[31m-import {[m
+[31m-  createContext,[m
+[31m-  useContext,[m
+[31m-  useEffect,[m
+[31m-  useState,[m
+[31m-  ReactNode,[m
+[31m-} from "react";[m
+[31m-[m
+[31m-import {[m
+[31m-  User,[m
+[31m-  onAuthStateChanged,[m
+[31m-  signOut,[m
+[31m-} from "firebase/auth";[m
+[31m-[m
+[31m-import { auth } from "@/lib/firebase";[m
+[31m-[m
+[31m-import {[m
+[31m-  getUser,[m
+[31m-  createUser,[m
+[31m-} from "@/services/user.service";[m
+[31m-[m
+[31m-import { UserProfile } from "@/types/user";[m
+[31m-[m
+[31m-type AuthContextType = {[m
+[31m-  firebaseUser: User | null;[m
+[31m-  user: UserProfile | null;[m
+[31m-  loading: boolean;[m
+[31m-  logout: () => Promise<void>;[m
+[31m-};[m
+[31m-[m
+[31m-const AuthContext = createContext<AuthContextType | null>(null);[m
+[31m-[m
+[31m-export function AuthProvider({[m
+[31m-  children,[m
+[31m-}: {[m
+[31m-  children: ReactNode;[m
+[31m-}) {[m
+[31m-  const [firebaseUser, setFirebaseUser] = useState<User | null>(null);[m
+[31m-[m
+[31m-  const [user, setUser] = useState<UserProfile | null>(null);[m
+[31m-[m
+[31m-  const [loading, setLoading] = useState(true);[m
+[31m-[m
+[31m-  useEffect(() => {[m
+[31m-    const unsubscribe = onAuthStateChanged([m
+[31m-      auth,[m
+[31m-      async (fbUser) => {[m
+[31m-        if (!fbUser) {[m
+[31m-          setFirebaseUser(null);[m
+[31m-          setUser(null);[m
+[31m-          setLoading(false);[m
+[31m-          return;[m
+[31m-        }[m
+[31m-[m
+[31m-        setFirebaseUser(fbUser);[m
+[31m-[m
+[31m-        let profile = await getUser(fbUser.uid);[m
+[31m-[m
+[31m-        if (!profile) {[m
+[31m-          await createUser({[m
+[31m-            userId: fbUser.uid,[m
+[31m-            email: fbUser.email ?? "",[m
+[31m-[m
+[31m-            displayName: fbUser.displayName ?? "",[m
+[31m-[m
+[31m-            firstName: "",[m
+[31m-[m
+[31m-            lastName: "",[m
+[31m-[m
+[31m-            country: "",[m
+[31m-[m
+[31m-            city: "",[m
+[31m-[m
+[31m-            bio: "",[m
+[31m-[m
+[31m-            photos: [],[m
+[31m-[m
+[31m-            interests: [],[m
+[31m-[m
+[31m-            admin: false,[m
+[31m-[m
+[31m-            isAi: false,[m
+[31m-[m
+[31m-            verified: false,[m
+[31m-[m
+[31m-            active: true,[m
+[31m-[m
+[31m-            online: true,[m
+[31m-[m
+[31m-            profileCompleted: false,[m
+[31m-[m
+[31m-            subscriptionStatus: "inactive",[m
+[31m-[m
+[31m-            paymentReference: "",[m
+[31m-[m
+[31m-            referralChoice: "",[m
+[31m-[m
+[31m-            referralCode: "",[m
+[31m-[m
+[31m-            referredBy: "",[m
+[31m-[m
+[31m-            referralCount: 0,[m
+[31m-          });[m
+[31m-[m
+[31m-          profile = await getUser(fbUser.uid);[m
+[31m-        }[m
+[31m-[m
+[31m-        setUser(profile);[m
+[31m-[m
+[31m-        setLoading(false);[m
+[31m-      }[m
+[31m-    );[m
+[31m-[m
+[31m-    return unsubscribe;[m
+[31m-  }, []);[m
+[31m-[m
+[31m-  async function logout() {[m
+[31m-    await signOut(auth);[m
+[31m-  }[m
+[31m-[m
+[31m-  return ([m
+[31m-    <AuthContext.Provider[m
+[31m-      value={{[m
+[31m-        firebaseUser,[m
+[31m-        user,[m
+[31m-        loading,[m
+[31m-        logout,[m
+[31m-      }}[m
+[31m-    >[m
+[31m-      {children}[m
+[31m-    </AuthContext.Provider>[m
+[31m-  );[m
+[31m-}[m
+[31m-[m
+[31m-export function useAuthContext() {[m
+[31m-  const ctx = useContext(AuthContext);[m
+[31m-[m
+[31m-  if (!ctx)[m
+[31m-    throw new Error([m
+[31m-      "useAuthContext must be inside AuthProvider"[m
+[31m-    );[m
+[31m-[m
+[31m-  return ctx;[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/client/src/contexts/AuthContext.tsx b/client/src/contexts/AuthContext.tsx[m
+[1mindex 5ec2114..8849ebb 100644[m
+[1m--- a/client/src/contexts/AuthContext.tsx[m
+[1m+++ b/client/src/contexts/AuthContext.tsx[m
+[36m@@ -40,7 +40,7 @@[m [mexport function AuthProvider({ children }: { children: React.ReactNode }) {[m
+     const currentUser = auth.currentUser;[m
+     if (!currentUser) return;[m
+     try {[m
+[31m-      const data = await getProfile(currentUser.uid);[m
+[32m+[m[32m      const data = await getProfile(currentUser.userId);[m
+       setProfile(data);[m
+       setIsAdmin(data.admin === true);[m
+       const status = (data.subscriptionStatus ?? "pending") as SubscriptionStatus;[m
+[1mdiff --git a/client/src/pages/admin/AdminUsers.tsx b/client/src/pages/admin/AdminUsers.tsx[m
+[1mindex 5528268..13fb328 100644[m
+[1m--- a/client/src/pages/admin/AdminUsers.tsx[m
+[1m+++ b/client/src/pages/admin/AdminUsers.tsx[m
+[36m@@ -48,7 +48,7 @@[m [mexport default function AdminUsers() {[m
+     setLoading(true);[m
+     try {[m
+       const snap = await getDocs(query(collection(db, "users"), orderBy("createdAt", "desc")));[m
+[31m-      const list = snap.docs.map((d) => ({ uid: d.id, ...d.data() }));[m
+[32m+[m[32m      const list = snap.docs.map((d) => ({ userId: d.id, ...d.data() }));[m
+       setUsers(list);[m
+       setFiltered(list);[m
+     } catch {[m
+[36m@@ -58,11 +58,11 @@[m [mexport default function AdminUsers() {[m
+     }[m
+   };[m
+ [m
+[31m-  const toggleStatus = async (uid: string, current: string) => {[m
+[32m+[m[32m  const toggleStatus = async (userId: string, current: string) => {[m
+     setActionLoading(true);[m
+     try {[m
+       const newStatus = current === "active" ? "suspended" : "active";[m
+[31m-      await updateDoc(doc(db, "users", uid), { subscriptionStatus: newStatus });[m
+[32m+[m[32m      await updateDoc(doc(db, "users", userId), { subscriptionStatus: newStatus });[m
+       toast.success(`User ${newStatus}`);[m
+       await loadUsers();[m
+       setSelected(null);[m
+[36m@@ -73,10 +73,10 @@[m [mexport default function AdminUsers() {[m
+     }[m
+   };[m
+ [m
+[31m-  const makeAdmin = async (uid: string) => {[m
+[32m+[m[32m  const makeAdmin = async (userId: string) => {[m
+     setActionLoading(true);[m
+     try {[m
+[31m-      await updateDoc(doc(db, "users", uid), { admin: true, role: "admin" });[m
+[32m+[m[32m      await updateDoc(doc(db, "users", userId), { admin: true, role: "admin" });[m
+       toast.success("User promoted to admin");[m
+       await loadUsers();[m
+       setSelected(null);[m
+[36m@@ -88,12 +88,12 @@[m [mexport default function AdminUsers() {[m
+   };[m
+ [m
+   // Full account deletion — removes user doc + related subcollections[m
+[31m-  const deleteAccount = async (uid: string) => {[m
+[32m+[m[32m  const deleteAccount = async (userId: string) => {[m
+     setActionLoading(true);[m
+     try {[m
+       const batch = writeBatch(db);[m
+       // Delete user document[m
+[31m-      batch.delete(doc(db, "users", uid));[m
+[32m+[m[32m      batch.delete(doc(db, "users", userId));[m
+       // Delete notifications[m
+       const notifSnap = await getDocs(query(col(db, "notifications"), ...[]));[m
+       // We delete the user doc; related data cleanup below[m
+[36m@@ -121,7 +121,7 @@[m [mexport default function AdminUsers() {[m
+       <div className="mb-6 flex items-center justify-between">[m
+         <div>[m
+           <h1 className="font-['Playfair_Display'] text-3xl font-bold text-foreground">Users</h1>[m
+[31m-          <p className="mt-1 text-muted-foreground">{users.length} total members</p>[m
+[32m+[m[32m          <p className="mt-1 text-muted-foreground">{users.length} total users</p>[m
+         </div>[m
+         <Button variant="outline" size="sm" onClick={loadUsers} disabled={loading}>[m
+           Refresh[m
+[36m@@ -167,7 +167,7 @@[m [mexport default function AdminUsers() {[m
+       ) : ([m
+         <div className="space-y-2">[m
+           {filtered.map((u) => ([m
+[31m-            <Card key={u.uid} className="hover:shadow-sm transition-shadow cursor-pointer" onClick={() => setSelected(u)}>[m
+[32m+[m[32m            <Card key={u.userId} className="hover:shadow-sm transition-shadow cursor-pointer" onClick={() => setSelected(u)}>[m
+               <CardContent className="flex items-center gap-4 p-4">[m
+                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-semibold shrink-0">[m
+                   {(u.displayName || u.email || "?").slice(0, 2).toUpperCase()}[m
+[36m@@ -226,7 +226,7 @@[m [mexport default function AdminUsers() {[m
+               <Button[m
+                 variant="outline"[m
+                 className={`gap-2 ${selected.subscriptionStatus === "active" ? "border-red-200 text-red-600 hover:bg-red-50" : "border-green-200 text-green-700 hover:bg-green-50"}`}[m
+[31m-                onClick={() => toggleStatus(selected.uid, selected.subscriptionStatus || "pending")}[m
+[32m+[m[32m                onClick={() => toggleStatus(selected.userId, selected.subscriptionStatus || "pending")}[m
+                 disabled={actionLoading}[m
+               >[m
+                 {selected.subscriptionStatus === "active" ? <><UserX size={16} />Suspend</> : <><UserCheck size={16} />Activate</>}[m
+[36m@@ -235,7 +235,7 @@[m [mexport default function AdminUsers() {[m
+                 <Button[m
+                   variant="outline"[m
+                   className="gap-2 border-amber-200 text-amber-700 hover:bg-amber-50"[m
+[31m-                  onClick={() => makeAdmin(selected.uid)}[m
+[32m+[m[32m                  onClick={() => makeAdmin(selected.userId)}[m
+                   disabled={actionLoading}[m
+                 >[m
+                   <Shield size={16} />Make Admin[m
+[36m@@ -272,7 +272,7 @@[m [mexport default function AdminUsers() {[m
+             </Button>[m
+             <Button[m
+               variant="destructive"[m
+[31m-              onClick={() => selected && deleteAccount(selected.uid)}[m
+[32m+[m[32m              onClick={() => selected && deleteAccount(selected.userId)}[m
+               disabled={actionLoading}[m
+               className="gap-2"[m
+             >[m
+[1mdiff --git a/client/src/pages/auth/Login.tsx b/client/src/pages/auth/Login.tsx[m
+[1mindex 2112b18..d882c60 100644[m
+[1m--- a/client/src/pages/auth/Login.tsx[m
+[1m+++ b/client/src/pages/auth/Login.tsx[m
+[36m@@ -45,7 +45,7 @@[m [mexport default function LoginPage() {[m
+       const { getDoc, doc } = await import("firebase/firestore");[m
+       const { db } = await import("@/lib/firebase");[m
+       // Note: Using static imports is preferred but kept for compatibility[m
+[31m-      const snap = await getDoc(doc(db, "users", user.uid));[m
+[32m+[m[32m      const snap = await getDoc(doc(db, "users", user.userId));[m
+       const userData = snap.data();[m
+       // Admin users bypass subscription gate[m
+       if (userData?.admin === true || userData?.role === "admin") {[m
+[1mdiff --git a/client/src/pages/dashboard/Profile.tsx b/client/src/pages/dashboard/Profile.tsx[m
+[1mindex e64f0fc..db41c61 100644[m
+[1m--- a/client/src/pages/dashboard/Profile.tsx[m
+[1m+++ b/client/src/pages/dashboard/Profile.tsx[m
+[36m@@ -73,7 +73,7 @@[m [mexport default function ProfilePage() {[m
+     try {[m
+       setLoading(true);[m
+       const finalCountry = showCustomCountry ? customCountry : country;[m
+[31m-      await updateProfile(profile.uid, {[m
+[32m+[m[32m      await updateProfile(profile.userId, {[m
+         ...data,[m
+         country: finalCountry,[m
+         interests: selectedInterests,[m
+[36m@@ -115,7 +115,7 @@[m [mexport default function ProfilePage() {[m
+             <div className="mt-3 flex justify-center gap-2">[m
+               <Badge variant="secondary">{profile.country}</Badge>[m
+               {profile.subscriptionStatus === "active" && ([m
+[31m-                <Badge className="bg-primary/10 text-primary">Active Member</Badge>[m
+[32m+[m[32m                <Badge className="bg-primary/10 text-primary">Active User</Badge>[m
+               )}[m
+             </div>[m
+           </CardContent>[m
+[1mdiff --git a/client/src/pages/dashboard/Referrals.tsx b/client/src/pages/dashboard/Referrals.tsx[m
+[1mindex 6160982..e30d467 100644[m
+[1m--- a/client/src/pages/dashboard/Referrals.tsx[m
+[1m+++ b/client/src/pages/dashboard/Referrals.tsx[m
+[36m@@ -27,16 +27,16 @@[m [mexport default function ReferralsPage() {[m
+   const isComplete = referralGoal > 0 && completed >= referralGoal;[m
+ [m
+   useEffect(() => {[m
+[31m-    if (profile.uid) {[m
+[31m-      getReferralStats(profile.uid).then(setStats);[m
+[32m+[m[32m    if (profile.userId) {[m
+[32m+[m[32m      getReferralStats(profile.userId).then(setStats);[m
+     }[m
+[31m-  }, [profile.uid]);[m
+[32m+[m[32m  }, [profile.userId]);[m
+ [m
+   const handleRefresh = async () => {[m
+     setLoading(true);[m
+     await refreshProfile();[m
+[31m-    if (profile.uid) {[m
+[31m-      const s = await getReferralStats(profile.uid);[m
+[32m+[m[32m    if (profile.userId) {[m
+[32m+[m[32m      const s = await getReferralStats(profile.userId);[m
+       setStats(s);[m
+     }[m
+     toast.success("Referral progress updated!");[m
+[1mdiff --git a/client/src/pages/dashboard/Settings.tsx b/client/src/pages/dashboard/Settings.tsx[m
+[1mindex 813b7c8..b28c75b 100644[m
+[1m--- a/client/src/pages/dashboard/Settings.tsx[m
+[1m+++ b/client/src/pages/dashboard/Settings.tsx[m
+[36m@@ -67,9 +67,9 @@[m [mexport default function SettingsPage() {[m
+   const savePrivacySettings = async (key: string, value: boolean) => {[m
+     const updated = { ...privacy, [key]: value };[m
+     setPrivacy(updated);[m
+[31m-    if (profile.uid) {[m
+[32m+[m[32m    if (profile.userId) {[m
+       try {[m
+[31m-        await updateDoc(doc(db, "users", profile.uid), { privacySettings: updated });[m
+[32m+[m[32m        await updateDoc(doc(db, "users", profile.userId), { privacySettings: updated });[m
+         toast.success("Privacy settings saved");[m
+       } catch {[m
+         toast.error("Failed to save settings");[m
+[1mdiff --git a/client/src/pages/subscription/Referrals.tsx b/client/src/pages/subscription/Referrals.tsx[m
+[1mindex 6160982..3ff3ce5 100644[m
+[1m--- a/client/src/pages/subscription/Referrals.tsx[m
+[1m+++ b/client/src/pages/subscription/Referrals.tsx[m
+[36m@@ -16,27 +16,33 @@[m [mimport { getCountryCurrency } from "@/lib/constants";[m
+ export default function ReferralsPage() {[m
+   const { profile, refreshProfile, logout } = useAuth();[m
+   const [, navigate] = useLocation();[m
+[31m-  const [stats, setStats] = useState({ total: 0, paid: 0, pending: 0 });[m
+[32m+[m[32m  const [stats, setStats] = useState({[m
+[32m+[m[32m  subscription: null as any,[m
+[32m+[m[32m  total: 0,[m
+[32m+[m[32m  paid: 0,[m
+[32m+[m[32m  pending: 0,[m
+[32m+[m[32m});[m
+   const [loading, setLoading] = useState(false);[m
+ [m
+   const { symbol, currency } = getCountryCurrency(profile.country);[m
+[31m-  const referralGoal = profile.referralChoice ?? 0;[m
+[32m+[m[32m  const referralGoal =[m
+[32m+[m[32m  stats.subscription?.selectedReferralChoice ?? 0;[m
+   const completed = stats.paid;[m
+   const remaining = Math.max(0, referralGoal - completed);[m
+   const progress = referralGoal > 0 ? (completed / referralGoal) * 100 : 0;[m
+   const isComplete = referralGoal > 0 && completed >= referralGoal;[m
+ [m
+   useEffect(() => {[m
+[31m-    if (profile.uid) {[m
+[31m-      getReferralStats(profile.uid).then(setStats);[m
+[32m+[m[32m    if (profile.userId) {[m
+[32m+[m[32m      getReferralStats(profile.userId).then(setStats);[m
+     }[m
+[31m-  }, [profile.uid]);[m
+[32m+[m[32m  }, [profile.userId]);[m
+ [m
+   const handleRefresh = async () => {[m
+     setLoading(true);[m
+     await refreshProfile();[m
+[31m-    if (profile.uid) {[m
+[31m-      const s = await getReferralStats(profile.uid);[m
+[32m+[m[32m    if (profile.userId) {[m
+[32m+[m[32m      const s = await getReferralStats(profile.userId);[m
+       setStats(s);[m
+     }[m
+     toast.success("Referral progress updated!");[m
+[36m@@ -144,11 +150,13 @@[m [mexport default function ReferralsPage() {[m
+               <div>[m
+                 <p className="text-sm text-muted-foreground">Your membership price</p>[m
+                 <p className="text-3xl font-extrabold text-primary mt-1">[m
+[31m-                  {symbol} {profile.amountDue} {currency}[m
+[32m+[m[32m                  {symbol} {stats.subscription?.amountDue ?? 0} {currency}[m
+                 </p>[m
+               </div>[m
+               <Badge variant="secondary" className="text-sm px-3 py-1">[m
+[31m-                {profile.referralChoice === 0 ? "Pay Now" : `Refer ${profile.referralChoice}`}[m
+[32m+[m[32m                {referralGoal === 0[m
+[32m+[m[32m  ? "Pay Now"[m
+[32m+[m[32m  : `Refer ${referralGoal}`}[m
+               </Badge>[m
+             </div>[m
+           </CardContent>[m
+[1mdiff --git a/client/src/pages/subscription/Subscription.tsx b/client/src/pages/subscription/Subscription.tsx[m
+[1mindex 860efde..3878eba 100644[m
+[1m--- a/client/src/pages/subscription/Subscription.tsx[m
+[1m+++ b/client/src/pages/subscription/Subscription.tsx[m
+[36m@@ -54,9 +54,11 @@[m [mexport default function SubscriptionPage() {[m
+     //[m
+     // Save subscription[m
+     //[m
+[32m+[m[32m    console.log("PROFILE", profile);[m
+[32m+[m[32m    console.log("UID", profile.userId);[m
+ [m
+     await subscriptionService.selectPlan([m
+[31m-      profile.uid,[m
+[32m+[m[32m      profile.userId,[m
+       referrals,[m
+     );[m
+ [m
+[36m@@ -74,7 +76,7 @@[m [mexport default function SubscriptionPage() {[m
+ [m
+       const payment =[m
+         await paymentService.createPayment([m
+[31m-          profile.uid,[m
+[32m+[m[32m          profile.userId,[m
+         );[m
+ [m
+       //[m
+[1mdiff --git a/client/src/services/auth.service.ts b/client/src/services/auth.service.ts[m
+[1mindex f92efb2..916ae29 100644[m
+[1m--- a/client/src/services/auth.service.ts[m
+[1m+++ b/client/src/services/auth.service.ts[m
+[36m@@ -34,8 +34,8 @@[m [mexport async function registerUser(data: RegisterData): Promise<User> {[m
+     const urlParams = new URLSearchParams(window.location.search);[m
+     const referredBy = urlParams.get("ref") ?? "";[m
+ [m
+[31m-    await setDoc(doc(db, "users", user.uid), {[m
+[31m-      uid: user.uid,[m
+[32m+[m[32m    await setDoc(doc(db, "users", user.userId), {[m
+[32m+[m[32m      userId: user.userId,[m
+       email,[m
+       displayName,[m
+       country,[m
+[1mdiff --git a/client/src/services/match.service.ts b/client/src/services/match.service.ts[m
+[1mindex a49b00c..f3e1b78 100644[m
+[1m--- a/client/src/services/match.service.ts[m
+[1m+++ b/client/src/services/match.service.ts[m
+[36m@@ -19,35 +19,35 @@[m [mimport { AI_PROFILES } from "@/data/aiProfiles";[m
+ import type { DiscoverProfile, Match } from "@/types";[m
+ [m
+ export async function recordLike([m
+[31m-  fromUid: string,[m
+[31m-  toUid: string[m
+[32m+[m[32m  fromUserId: string,[m
+[32m+[m[32m  toUserId: string[m
+ ): Promise<{ isMatch: boolean; matchId?: string; conversationId?: string }> {[m
+   // Check if the other person already liked us[m
+   const reverseQ = query([m
+     collection(db, "likes"),[m
+[31m-    where("fromUid", "==", toUid),[m
+[31m-    where("toUid", "==", fromUid)[m
+[32m+[m[32m    where("fromUserId", "==", toUserId),[m
+[32m+[m[32m    where("toUserId", "==", fromUserId)[m
+   );[m
+   const reverseSnap = await getDocs(reverseQ);[m
+   const isMatch = !reverseSnap.empty;[m
+ [m
+   // Record this like[m
+   await addDoc(collection(db, "likes"), {[m
+[31m-    fromUid,[m
+[31m-    toUid,[m
+[32m+[m[32m    fromUserId,[m
+[32m+[m[32m    toUserId,[m
+     createdAt: serverTimestamp(),[m
+   });[m
+ [m
+   if (isMatch) {[m
+     // Create match record[m
+     const matchRef = await addDoc(collection(db, "matches"), {[m
+[31m-      users: [fromUid, toUid],[m
+[32m+[m[32m      users: [fromUserId, toUserId],[m
+       createdAt: serverTimestamp(),[m
+     });[m
+ [m
+     // Create conversation[m
+     const convRef = await addDoc(collection(db, "conversations"), {[m
+[31m-      members: [fromUid, toUid],[m
+[32m+[m[32m      users: [fromUserId, toUserId],[m
+       matchId: matchRef.id,[m
+       lastMessage: "",[m
+       lastMessageAt: serverTimestamp(),[m
+[36m@@ -61,31 +61,31 @@[m [mexport async function recordLike([m
+   return { isMatch: false };[m
+ }[m
+ [m
+[31m-export async function recordPass(fromUid: string, toUid: string): Promise<void> {[m
+[32m+[m[32mexport async function recordPass(fromUserId: string, toUserId: string): Promise<void> {[m
+   await addDoc(collection(db, "passes"), {[m
+[31m-    fromUid,[m
+[31m-    toUid,[m
+[32m+[m[32m    fromUserId,[m
+[32m+[m[32m    toUserId,[m
+     createdAt: serverTimestamp(),[m
+   });[m
+ }[m
+ [m
+[31m-export async function getSeenProfiles(uid: string): Promise<Set<string>> {[m
+[32m+[m[32mexport async function getSeenProfiles(userId: string): Promise<Set<string>> {[m
+   const [likesSnap, passesSnap] = await Promise.all([[m
+[31m-    getDocs(query(collection(db, "likes"), where("fromUid", "==", uid))),[m
+[31m-    getDocs(query(collection(db, "passes"), where("fromUid", "==", uid))),[m
+[32m+[m[32m    getDocs(query(collection(db, "likes"), where("fromUserId", "==", userId))),[m
+[32m+[m[32m    getDocs(query(collection(db, "passes"), where("fromUserId", "==", userId))),[m
+   ]);[m
+ [m
+   const seen = new Set<string>();[m
+[31m-  likesSnap.docs.forEach((d) => seen.add(d.data().toUid));[m
+[31m-  passesSnap.docs.forEach((d) => seen.add(d.data().toUid));[m
+[32m+[m[32m  likesSnap.docs.forEach((d) => seen.add(d.data().toUserId));[m
+[32m+[m[32m  passesSnap.docs.forEach((d) => seen.add(d.data().toUserId));[m
+   return seen;[m
+ }[m
+ [m
+ export async function getDiscoverQueue([m
+[31m-  uid: string,[m
+[32m+[m[32m  userId: string,[m
+   interestedIn: string = "everyone"[m
+ ): Promise<DiscoverProfile[]> {[m
+[31m-  const seen = await getSeenProfiles(uid);[m
+[32m+[m[32m  const seen = await getSeenProfiles(userId);[m
+ [m
+   // Get real users[m
+   const usersRef = collection(db, "users");[m
+[36m@@ -122,7 +122,7 @@[m [mexport async function getDiscoverQueue([m
+         isAI: false,[m
+       } as DiscoverProfile;[m
+     })[m
+[31m-    .filter((p) => p.id !== uid && !seen.has(p.id));[m
+[32m+[m[32m    .filter((p) => p.id !== userId && !seen.has(p.id));[m
+ [m
+   // Mix in AI profiles[m
+   const aiProfiles: DiscoverProfile[] = AI_PROFILES[m
+[36m@@ -165,10 +165,10 @@[m [mexport async function getDiscoverQueue([m
+   return mixed;[m
+ }[m
+ [m
+[31m-export async function getUserMatches(uid: string): Promise<Match[]> {[m
+[32m+[m[32mexport async function getUserMatches(userId: string): Promise<Match[]> {[m
+   const q = query([m
+     collection(db, "matches"),[m
+[31m-    where("users", "array-contains", uid),[m
+[32m+[m[32m    where("users", "array-contains", userId),[m
+     orderBy("createdAt", "desc")[m
+   );[m
+   const snap = await getDocs(q);[m
+[1mdiff --git a/client/src/services/message.service.ts b/client/src/services/message.service.ts[m
+[1mindex b93e737..c285ba7 100644[m
+[1m--- a/client/src/services/message.service.ts[m
+[1m+++ b/client/src/services/message.service.ts[m
+[36m@@ -21,25 +21,25 @@[m [mimport { db } from "@/lib/firebase";[m
+ import type { Conversation, ChatMessage } from "@/types";[m
+ [m
+ export async function getOrCreateConversation([m
+[31m-  uid1: string,[m
+[31m-  uid2: string[m
+[32m+[m[32m  userId1: string,[m
+[32m+[m[32m  userId2: string[m
+ ): Promise<string> {[m
+   // Check if conversation already exists[m
+   const q = query([m
+     collection(db, "conversations"),[m
+[31m-    where("members", "array-contains", uid1)[m
+[32m+[m[32m    where("users", "array-contains", userId1)[m
+   );[m
+   const snap = await getDocs(q);[m
+   const existing = snap.docs.find((d) => {[m
+[31m-    const members = d.data().members as string[];[m
+[31m-    return members.includes(uid2);[m
+[32m+[m[32m    const users = d.data().users as string[];[m
+[32m+[m[32m    return users.includes(userId2);[m
+   });[m
+ [m
+   if (existing) return existing.id;[m
+ [m
+   // Create new conversation[m
+   const ref = await addDoc(collection(db, "conversations"), {[m
+[31m-    members: [uid1, uid2],[m
+[32m+[m[32m    users: [userId1, userId2],[m
+     lastMessage: "",[m
+     lastMessageAt: serverTimestamp(),[m
+     createdAt: serverTimestamp(),[m
+[36m@@ -50,12 +50,12 @@[m [mexport async function getOrCreateConversation([m
+ }[m
+ [m
+ export function subscribeToConversations([m
+[31m-  uid: string,[m
+[32m+[m[32m  userId: string,[m
+   callback: (conversations: Conversation[]) => void[m
+ ): () => void {[m
+   const q = query([m
+     collection(db, "conversations"),[m
+[31m-    where("members", "array-contains", uid),[m
+[32m+[m[32m    where("users", "array-contains", userId),[m
+     orderBy("lastMessageAt", "desc")[m
+   );[m
+ [m
+[36m@@ -115,7 +115,7 @@[m [mexport async function sendMessage([m
+ [m
+ export async function markMessagesRead([m
+   conversationId: string,[m
+[31m-  uid: string[m
+[32m+[m[32m  userId: string[m
+ ): Promise<void> {[m
+   const q = query([m
+     collection(db, "conversations", conversationId, "messages"),[m
+[36m@@ -124,7 +124,7 @@[m [mexport async function markMessagesRead([m
+   const snap = await getDocs(q);[m
+   const batch = writeBatch(db);[m
+   snap.docs.forEach((d) => {[m
+[31m-    if (d.data().senderId !== uid) {[m
+[32m+[m[32m    if (d.data().senderId !== userId) {[m
+       batch.update(d.ref, { read: true });[m
+     }[m
+   });[m
+[1mdiff --git a/client/src/services/payment.service.ts b/client/src/services/payment.service.ts[m
+[1mindex bab6967..f3972e8 100644[m
+[1m--- a/client/src/services/payment.service.ts[m
+[1m+++ b/client/src/services/payment.service.ts[m
+[36m@@ -143,12 +143,12 @@[m [mexport class PaymentService {[m
+   // ------------------------------------------------------------[m
+ [m
+   async getUser([m
+[31m-    uid: string,[m
+[32m+[m[32m    userId: string,[m
+   ): Promise<UserProfile | null> {[m
+ [m
+     const ref = doc([m
+       this.usersCollection,[m
+[31m-      uid,[m
+[32m+[m[32m      userId,[m
+     );[m
+ [m
+     const snap = await getDoc(ref);[m
+[1mdiff --git a/client/src/services/profile.service.ts b/client/src/services/profile.service.ts[m
+[1mindex 8564fde..fa5e1e8 100644[m
+[1m--- a/client/src/services/profile.service.ts[m
+[1m+++ b/client/src/services/profile.service.ts[m
+[36m@@ -18,21 +18,21 @@[m [mimport { db } from "@/lib/firebase";[m
+ import type { UserProfile } from "@/types";[m
+ import { emptyProfile } from "@/types";[m
+ [m
+[31m-export async function getProfile(uid: string): Promise<UserProfile> {[m
+[31m-  const snap = await getDoc(doc(db, "users", uid));[m
+[31m-  if (!snap.exists()) return { ...emptyProfile, uid };[m
+[31m-  return { uid, ...snap.data() } as UserProfile;[m
+[32m+[m[32mexport async function getProfile(userId: string): Promise<UserProfile> {[m
+[32m+[m[32m  const snap = await getDoc(doc(db, "users", userId));[m
+[32m+[m[32m  if (!snap.exists()) return { ...emptyProfile, userId };[m
+[32m+[m[32m  return { userId, ...snap.data() } as UserProfile;[m
+ }[m
+ [m
+[31m-export async function updateProfile(uid: string, data: Partial<UserProfile>): Promise<void> {[m
+[31m-  await updateDoc(doc(db, "users", uid), {[m
+[32m+[m[32mexport async function updateProfile(userId: string, data: Partial<UserProfile>): Promise<void> {[m
+[32m+[m[32m  await updateDoc(doc(db, "users", userId), {[m
+     ...data,[m
+     updatedAt: serverTimestamp(),[m
+   });[m
+ }[m
+ [m
+ export async function getDiscoverProfiles([m
+[31m-  currentUid: string,[m
+[32m+[m[32m  currentUserId: string,[m
+   interestedIn: string = "everyone",[m
+   pageSize: number = 20[m
+ ): Promise<UserProfile[]> {[m
+[36m@@ -58,8 +58,8 @@[m [mexport async function getDiscoverProfiles([m
+ [m
+   const snap = await getDocs(q);[m
+   return snap.docs[m
+[31m-    .map((d) => ({ uid: d.id, ...d.data() } as UserProfile))[m
+[31m-    .filter((p) => p.uid !== currentUid);[m
+[32m+[m[32m    .map((d) => ({ userId: d.id, ...d.data() } as UserProfile))[m
+[32m+[m[32m    .filter((p) => p.userId !== currentUserId);[m
+ }[m
+ [m
+ export async function getUserByReferralCode(code: string): Promise<UserProfile | null> {[m
+[36m@@ -71,5 +71,5 @@[m [mexport async function getUserByReferralCode(code: string): Promise<UserProfile |[m
+   const snap = await getDocs(q);[m
+   if (snap.empty) return null;[m
+   const d = snap.docs[0];[m
+[31m-  return { uid: d.id, ...d.data() } as UserProfile;[m
+[32m+[m[32m  return { userId: d.id, ...d.data() } as UserProfile;[m
+ }[m
+[1mdiff --git a/client/src/services/referral.service.ts b/client/src/services/referral.service.ts[m
+[1mindex 90bea5c..bc3e819 100644[m
+[1m--- a/client/src/services/referral.service.ts[m
+[1m+++ b/client/src/services/referral.service.ts[m
+[36m@@ -111,10 +111,10 @@[m [mexport class ReferralService {[m
+   // Get User[m
+   // ============================================================[m
+ [m
+[31m-  async getUser(uid: string): Promise<UserProfile | null> {[m
+[32m+[m[32m  async getUser(userId: string): Promise<UserProfile | null> {[m
+ [m
+     const snap = await getDoc([m
+[31m-      doc(this.usersCollection, uid)[m
+[32m+[m[32m      doc(this.usersCollection, userId)[m
+     );[m
+ [m
+     if (!snap.exists()) {[m
+[1mdiff --git a/client/src/services/storage.service.ts b/client/src/services/storage.service.ts[m
+[1mindex d92057f..253228e 100644[m
+[1m--- a/client/src/services/storage.service.ts[m
+[1m+++ b/client/src/services/storage.service.ts[m
+[36m@@ -73,21 +73,21 @@[m [mfunction validateFile([m
+ */[m
+ [m
+ export async function uploadProfilePhoto([m
+[31m-  uid: string,[m
+[32m+[m[32m  userId: string,[m
+   file: File,[m
+ ) {[m
+   validateFile(file, PROFILE_MAX_SIZE, PROFILE_TYPES);[m
+ [m
+   const storageRef = ref([m
+     storage,[m
+[31m-    `users/${uid}/profile/${Date.now()}-${file.name}`,[m
+[32m+[m[32m    `users/${userId}/profile/${Date.now()}-${file.name}`,[m
+   );[m
+ [m
+   await uploadBytes(storageRef, file);[m
+ [m
+   const url = await getDownloadURL(storageRef);[m
+ [m
+[31m-  await updateDoc(doc(db, "users", uid), {[m
+[32m+[m[32m  await updateDoc(doc(db, "users", userId), {[m
+     photos: arrayUnion(url),[m
+   });[m
+ [m
+[36m@@ -101,21 +101,21 @@[m [mexport async function uploadProfilePhoto([m
+ */[m
+ [m
+ export async function uploadGalleryPhoto([m
+[31m-  uid: string,[m
+[32m+[m[32m  userId: string,[m
+   file: File,[m
+ ) {[m
+   validateFile(file, GALLERY_MAX_SIZE, GALLERY_TYPES);[m
+ [m
+   const storageRef = ref([m
+     storage,[m
+[31m-    `users/${uid}/gallery/${Date.now()}-${file.name}`,[m
+[32m+[m[32m    `users/${userId}/gallery/${Date.now()}-${file.name}`,[m
+   );[m
+ [m
+   await uploadBytes(storageRef, file);[m
+ [m
+   const url = await getDownloadURL(storageRef);[m
+ [m
+[31m-  await updateDoc(doc(db, "users", uid), {[m
+[32m+[m[32m  await updateDoc(doc(db, "users", userId), {[m
+     photos: arrayUnion(url),[m
+   });[m
+ [m
+[36m@@ -129,7 +129,7 @@[m [mexport async function uploadGalleryPhoto([m
+ */[m
+ [m
+ export async function uploadVerificationDocument([m
+[31m-  uid: string,[m
+[32m+[m[32m  userId: string,[m
+   file: File,[m
+ ) {[m
+   validateFile([m
+[36m@@ -140,7 +140,7 @@[m [mexport async function uploadVerificationDocument([m
+ [m
+   const storageRef = ref([m
+     storage,[m
+[31m-    `users/${uid}/verification/${Date.now()}-${file.name}`,[m
+[32m+[m[32m    `users/${userId}/verification/${Date.now()}-${file.name}`,[m
+   );[m
+ [m
+   await uploadBytes(storageRef, file);[m
+[1mdiff --git a/client/src/services/subscription.service.ts b/client/src/services/subscription.service.ts[m
+[1mindex 6beef32..7aa4a03 100644[m
+[1m--- a/client/src/services/subscription.service.ts[m
+[1m+++ b/client/src/services/subscription.service.ts[m
+[36m@@ -93,7 +93,7 @@[m [mexport class SubscriptionService {[m
+ [m
+   async getUser([m
+ [m
+[31m-    uid: string,[m
+[32m+[m[32m    userId: string,[m
+ [m
+   ): Promise<UserProfile | null> {[m
+ [m
+[36m@@ -101,7 +101,7 @@[m [mexport class SubscriptionService {[m
+ [m
+       this.usersCollection,[m
+ [m
+[31m-      uid,[m
+[32m+[m[32m      userId,[m
+ [m
+     );[m
+ [m
+[36m@@ -1480,19 +1480,22 @@[m [masync processWithdrawal([m
+   );[m
+ }[m
+ async getReferralStats(userId: string) {[m
+[32m+[m
+   const subscription = await this.getSubscription(userId);[m
+ [m
+   const paid = await this.getPaidReferralCount(userId);[m
+ [m
+   const total = subscription[m
+[31m-    ? this.getReferralChoice(subscription)[m
+[32m+[m[32m    ? subscription.selectedReferralChoice[m
+     : 0;[m
+ [m
+   return {[m
+[32m+[m[32m    subscription,[m
+     total,[m
+     paid,[m
+     pending: Math.max(total - paid, 0),[m
+   };[m
+[32m+[m
+ }[m
+ [m
+ }[m
+[1mdiff --git a/client/src/services/user.service.ts b/client/src/services/user.service.ts[m
+[1mindex ef63736..8528780 100644[m
+[1m--- a/client/src/services/user.service.ts[m
+[1m+++ b/client/src/services/user.service.ts[m
+[36m@@ -8,8 +8,8 @@[m [mimport {[m
+ import { db } from "@/lib/firebase";[m
+ import { UserProfile } from "@/types/user";[m
+ [m
+[31m-export async function getUser(uid: string) {[m
+[31m-  const ref = doc(db, "users", uid);[m
+[32m+[m[32mexport async function getUser(userId: string) {[m
+[32m+[m[32m  const ref = doc(db, "users", userId);[m
+ [m
+   const snap = await getDoc(ref);[m
+ [m
+[36m@@ -19,16 +19,16 @@[m [mexport async function getUser(uid: string) {[m
+ }[m
+ [m
+ export async function createUser([m
+[31m-  user: Partial<UserProfile> & { uid?: string; userId?: string }[m
+[32m+[m[32m  user: Partial<UserProfile> & { userd?: string; userId?: string }[m
+ ) {[m
+[31m-  const userId = user.userId ?? user.uid;[m
+[32m+[m[32m  const userId = user.userId;[m
+ [m
+   if (!userId) {[m
+     throw new Error("User ID is required.");[m
+   }[m
+ [m
+   const ref = doc(db, "users", userId);[m
+[31m-  const { uid, userId: _userId, ...profileData } = user;[m
+[32m+[m[32m  const { userId, userId: _userId, ...profileData } = user;[m
+ [m
+   await setDoc(ref, {[m
+     ...profileData,[m
+[1mdiff --git a/client/src/types/index.ts b/client/src/types/index.ts[m
+[1mindex 9853b25..987466f 100644[m
+[1m--- a/client/src/types/index.ts[m
+[1m+++ b/client/src/types/index.ts[m
+[36m@@ -13,7 +13,7 @@[m [mexport type Gender = "male" | "female" | "other";[m
+ export type InterestedIn = "male" | "female" | "everyone";[m
+ [m
+ export interface UserProfile {[m
+[31m-  uid: string;[m
+[32m+[m[32m  userId: string;[m
+   email: string;[m
+   displayName: string;[m
+   firstName?: string;[m
+[36m@@ -59,7 +59,7 @@[m [mexport interface UserProfile {[m
+ }[m
+ [m
+ export const emptyProfile: UserProfile = {[m
+[31m-  uid: "",[m
+[32m+[m[32m  userId: "",[m
+   email: "",[m
+   displayName: "",[m
+   subscriptionStatus: "pending",[m
+[36m@@ -111,8 +111,8 @@[m [mexport interface Match {[m
+ [m
+ export interface Like {[m
+   id: string;[m
+[31m-  fromUid: string;[m
+[31m-  toUid: string;[m
+[32m+[m[32m  fromUserId: string;[m
+[32m+[m[32m  toUserId: string;[m
+   createdAt: Timestamp | null;[m
+ }[m
+ [m
+[36m@@ -120,8 +120,8 @@[m [mexport interface Like {[m
+ [m
+ export interface Conversation {[m
+   id: string;[m
+[31m-  members: string[];[m
+[31m-  memberProfiles?: Record<string, { displayName: string; photoURL?: string }>;[m
+[32m+[m[32m  users: string[];[m
+[32m+[m[32m  userProfiles?: Record<string, { displayName: string; photoURL?: string }>;[m
+   lastMessage?: string;[m
+   lastMessageAt?: Timestamp | null;[m
+   unreadCount?: Record<string, number>;[m
+[36m@@ -190,7 +190,7 @@[m [mexport interface Payment {[m
+ export interface ReferralRecord {[m
+   id: string;[m
+   referrerId: string;[m
+[31m-  referredUid: string;[m
+[32m+[m[32m  referredUserId: string;[m
+   referredEmail: string;[m
+   referredName?: string;[m
+   paid: boolean;[m
